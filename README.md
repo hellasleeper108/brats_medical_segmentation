@@ -154,4 +154,4 @@ Our model achieved **world-class performance** on the official BraTS 2021 datase
 
 ## Contributing
 
-This is a defensive security and medical AI project focused on healthcare applications. All contributions should align with medical ethics and patient privacy standards.
+This is a medical AI project focused on healthcare applications. All contributions should align with medical ethics and patient privacy standards.
