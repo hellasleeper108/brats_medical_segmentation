@@ -1,0 +1,123 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Medical Image Data (Large Files)
+*.nii
+*.nii.gz
+*.dcm
+*.ima
+*.hdr
+*.img
+data/BraTS*/
+data/*/BraTS*/
+data/brats*/
+data/*/brats*/
+
+# Training Outputs
+checkpoints/
+checkpoints_*/
+logs/
+logs_*/
+wandb/
+tensorboard_logs/
+*.log
+training_output*.txt
+
+# Model Weights (Keep best models but exclude training checkpoints)
+checkpoint_epoch_*.pth
+model_epoch_*.pth
+temp_*.pth
+backup_*.pth
+
+# Predictions and Results
+predictions/
+results/
+output/
+temp/
+tmp/
+
+# Dataset Downloads
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Sensitive Configuration
+config_local.yaml
+*.key
+*.pem
+*.crt
+credentials.json
+
+# Large synthetic datasets
+data/enhanced_synthetic/
+data/samples/raw/
+data/samples/preprocessed/
+
+# Monitoring outputs
+gpu_monitor.txt
+training_monitor.txt
+system_stats.log
+
+# Windows batch file outputs
+*.bat.log
+
+# Keep important model files (uncomment if you want to include best models)
+# !checkpoints_brats2021_rescue/best_model_rescue.pth
+# !checkpoints/best_model.pth

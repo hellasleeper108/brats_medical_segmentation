@@ -1,0 +1,120 @@
+name: Test Medical Segmentation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+        pip install -r requirements.txt
+    
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        # Stop build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Test imports
+      run: |
+        python -c "import torch; print(f'PyTorch: {torch.__version__}')"
+        python -c "import monai; print(f'MONAI: {monai.__version__}')"
+        python -c "import nibabel; print(f'NiBabel: {nibabel.__version__}')"
+    
+    - name: Test model initialization
+      run: |
+        python -c "
+        from models.unet import UNet3D
+        model = UNet3D(in_channels=1, num_classes=4)
+        print(f'Model parameters: {sum(p.numel() for p in model.parameters()):,}')
+        "
+    
+    - name: Test data transforms
+      run: |
+        python -c "
+        from data.transforms import get_inference_transforms
+        transforms = get_inference_transforms()
+        print('Transforms initialized successfully')
+        "
+    
+    - name: Test inference predictor
+      run: |
+        python -c "
+        import torch
+        from inference.predictor import MedicalImagePredictor
+        # Test with dummy model path (will use random weights)
+        try:
+            predictor = MedicalImagePredictor('dummy_path.pth', device='cpu')
+            print('Predictor initialized successfully')
+        except Exception as e:
+            print(f'Expected error (no model file): {e}')
+        "
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run security scan
+      uses: securecodewarrior/github-action-add-sarif@v1
+      with:
+        sarif-file: 'security-results.sarif'
+      continue-on-error: true
+    
+    - name: Check for secrets
+      run: |
+        # Check for potential API keys, passwords, etc.
+        if grep -r -i "password\|secret\|api_key\|private_key" --include="*.py" --include="*.yaml" --include="*.yml" .; then
+          echo "⚠️  Potential secrets found - please review"
+          exit 1
+        else
+          echo "✅ No obvious secrets detected"
+        fi
+
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check documentation
+      run: |
+        # Check that essential documentation exists
+        test -f README.md || (echo "❌ README.md missing" && exit 1)
+        test -f INFERENCE_GUIDE.md || (echo "❌ INFERENCE_GUIDE.md missing" && exit 1)
+        test -f CLAUDE.md || (echo "❌ CLAUDE.md missing" && exit 1)
+        test -f LICENSE || (echo "❌ LICENSE missing" && exit 1)
+        echo "✅ All essential docs present"
+    
+    - name: Check model references
+      run: |
+        # Ensure README references the correct model path
+        if grep -q "checkpoints_brats2021_rescue/best_model_rescue.pth" README.md; then
+          echo "✅ README references correct model path"
+        else
+          echo "⚠️  README may not reference the best model"
+        fi

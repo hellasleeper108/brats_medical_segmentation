@@ -1,0 +1,59 @@
+# Medical Image Segmentation Configuration for Sample Training
+
+# Model Configuration
+model:
+  name: "unet"  # Using U-Net for initial training
+  input_size: [96, 96, 48]  # Smaller size for sample data
+  num_classes: 3  # Background + 2 tissue types
+  dropout: 0.2
+  batch_norm: true
+
+# Training Configuration
+training:
+  batch_size: 1  # Small batch for limited sample data
+  learning_rate: 0.001
+  epochs: 20  # More epochs for sample data
+  optimizer: "adamw"
+  scheduler: "cosine"
+  weight_decay: 0.01
+  gradient_clipping: 1.0
+  mixed_precision: true  # For memory efficiency
+
+# Data Configuration
+data:
+  dataset: "samples"  # Using custom dataset loader
+  data_root: "./data/samples"
+  train_split: 0.8
+  val_split: 0.2
+  test_split: 0.0
+  augmentation: true
+  normalize: true
+  cache_rate: 0.5  # Cache data in memory
+
+# Evaluation Configuration
+evaluation:
+  metrics: ["dice", "hausdorff", "surface_distance"]
+  dice_threshold: 0.85
+  save_predictions: true
+  visualize_results: true
+
+# Hardware Configuration
+hardware:
+  device: "cuda"
+  num_workers: 0  # Avoid multiprocessing issues on Windows
+  pin_memory: true
+  persistent_workers: false
+
+# Logging Configuration
+logging:
+  use_wandb: false  # Disable wandb for now
+  use_tensorboard: true
+  log_dir: "./logs"
+  save_interval: 5  # Save every 5 epochs
+
+# Paths
+paths:
+  checkpoints: "./checkpoints"
+  logs: "./logs"
+  predictions: "./predictions"
+  visualizations: "./visualizations"

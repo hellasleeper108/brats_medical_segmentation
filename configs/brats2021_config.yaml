@@ -1,0 +1,39 @@
+# BraTS 2021 Official Dataset Configuration
+
+# Data paths
+data:
+  train_dir: "../PKG - RSNA-ASNR-MICCAI-BraTS-2021/RSNA-ASNR-MICCAI-BraTS-2021/BraTS2021_TrainingSet"
+  val_dir: "../PKG - RSNA-ASNR-MICCAI-BraTS-2021/RSNA-ASNR-MICCAI-BraTS-2021/BraTS2021_ValidationSet"
+  target_size: [128, 128, 64]  # D, H, W - reduced depth for memory efficiency
+  modalities: ['t1', 't1ce', 't2', 'flair']
+  num_classes: 4
+
+# Model configuration
+model:
+  name: "unet3d"
+  in_channels: 4  # 4 MRI modalities
+  num_classes: 4  # Background + 3 tumor regions
+  base_filters: 32  # Reduced for memory efficiency
+
+# Training configuration
+training:
+  batch_size: 1  # Large 3D volumes, start with batch size 1
+  learning_rate: 0.0001
+  epochs: 100
+  train_split: 0.8
+  val_split: 0.2
+  optimizer: "adamw"
+  weight_decay: 0.01
+  mixed_precision: true
+
+# Hardware
+hardware:
+  device: "cuda"
+  num_workers: 2  # Reduced for memory efficiency
+  pin_memory: true
+
+# Logging
+logging:
+  log_dir: "./logs/brats2021"
+  save_interval: 10  # Save every 10 epochs
+  checkpoint_dir: "./checkpoints"

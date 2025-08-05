@@ -1,0 +1,20 @@
+{
+  "dataset_name": "Synthetic Samples",
+  "description": "Synthetic medical images for testing",
+  "num_samples": 4,
+  "classes": {
+    "0": "background",
+    "1": "brain_tissue",
+    "2": "lesion"
+  },
+  "image_size": [
+    128,
+    128,
+    64
+  ],
+  "spacing": [
+    1.0,
+    1.0,
+    1.0
+  ]
+}

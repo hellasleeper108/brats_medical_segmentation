@@ -1,0 +1,64 @@
+# Medical Image Segmentation Configuration
+
+# Model Configuration
+model:
+  name: "unet"  # Options: unet, vit, hybrid
+  input_size: [128, 128, 128]  # 3D volume dimensions
+  num_classes: 4  # Background + 3 tumor regions for BraTS
+  dropout: 0.2
+  batch_norm: true
+
+# Training Configuration
+training:
+  batch_size: 2  # Optimized for RTX 4080 Super (16GB VRAM)
+  learning_rate: 0.0001
+  epochs: 100
+  optimizer: "adamw"
+  scheduler: "cosine"
+  weight_decay: 0.01
+  gradient_clipping: 1.0
+  mixed_precision: true  # For memory efficiency
+
+# Data Configuration
+data:
+  dataset: "brats2021"  # Using official BraTS 2021 dataset
+  data_root: "../PKG - RSNA-ASNR-MICCAI-BraTS-2021/RSNA-ASNR-MICCAI-BraTS-2021/BraTS2021_TrainingSet"
+  validation_root: "../PKG - RSNA-ASNR-MICCAI-BraTS-2021/RSNA-ASNR-MICCAI-BraTS-2021/BraTS2021_ValidationSet"
+  train_split: 0.85  # Use most of training set for training
+  val_split: 0.15   # Use part of training set for validation
+  test_split: 0.0   # Use separate validation set for testing
+  augmentation: true
+  normalize: true
+  cache_rate: 0.3   # Reduced cache rate due to large dataset size
+  # BraTS specific settings
+  modalities: ['t1', 't1ce', 't2', 'flair']
+  target_size: [128, 128, 128]  # Volume dimensions
+  num_classes: 4  # Background, necrotic core, edema, enhancing tumor
+
+# Evaluation Configuration
+evaluation:
+  metrics: ["dice", "hausdorff", "surface_distance"]
+  dice_threshold: 0.85
+  save_predictions: true
+  visualize_results: true
+
+# Hardware Configuration
+hardware:
+  device: "cuda"
+  num_workers: 4
+  pin_memory: true
+  persistent_workers: true
+
+# Logging Configuration
+logging:
+  use_wandb: false
+  use_tensorboard: true
+  log_dir: "./logs"
+  save_interval: 10  # Save every 10 epochs
+
+# Paths
+paths:
+  checkpoints: "./checkpoints"
+  logs: "./logs"
+  predictions: "./predictions"
+  visualizations: "./visualizations"

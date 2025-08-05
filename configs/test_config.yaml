@@ -1,0 +1,25 @@
+data:
+  cache_rate: 0.0
+  data_root: ./data/samples
+  dataset: samples
+hardware:
+  device: cuda
+  num_workers: 0
+  pin_memory: false
+model:
+  dropout: 0.1
+  input_size:
+  - 64
+  - 64
+  - 32
+  name: unet
+  num_classes: 3
+paths:
+  checkpoints: ./checkpoints
+  logs: ./logs
+training:
+  batch_size: 1
+  epochs: 2
+  learning_rate: 0.001
+  mixed_precision: true
+  optimizer: adamw
